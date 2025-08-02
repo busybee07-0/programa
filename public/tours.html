@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gestión de Tours</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+
+  <h1>Gestión de Tours</h1>
+
+  <form id="tourForm">
+    <h2>Crear / Editar Tour</h2>
+    <input type="hidden" id="editIndex" />
+    
+    <label>Nombre del Tour:
+      <input type="text" id="nombre" required />
+    </label>
+    
+    <label>Descripción:
+      <textarea id="descripcion" required></textarea>
+    </label>
+    
+    <label>Tipo de Tour:
+      <select id="tipo" required>
+        <option value="">Seleccione</option>
+        <option value="Grupal">Grupal</option>
+        <option value="Personalizado">Personalizado</option>
+      </select>
+    </label>
+    
+    <label>Costo para la Empresa:
+      <input type="number" id="costoEmpresa" required min="0" />
+    </label>
+    
+    <label>Precio al Cliente:
+      <input type="number" id="precioCliente" required min="0" />
+    </label>
+
+    <h3>Visitas Guiadas</h3>
+    <div id="contenedorVisitas">
+      <div class="visita">
+        <label>Lugar:
+          <input type="text" class="lugar" required />
+        </label>
+        <label>Descripción:
+          <input type="text" class="descVisita" required />
+        </label>
+      </div>
+    </div>
+    
+    <button type="button" onclick="agregarVisita()">➕ Agregar Lugar</button>
+    <br><br>
+    <button type="submit">Guardar Tour</button>
+  </form>
+
+  <h2>Lista de Tours</h2>
+  <table id="tablaTours">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Tipo</th>
+        <th>Costo Empresa</th>
+        <th>Precio Cliente</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Visitas por Tour</h2>
+  <table id="tablaVisitas">
+    <thead>
+      <tr>
+        <th>Nombre del Tour</th>
+        <th>ID Visita</th>
+        <th>Lugar</th>
+        <th>Descripción</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script src="/js/tours.js"></script>
+</body>
+</html>

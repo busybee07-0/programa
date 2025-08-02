@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Realizar Reserva</title>
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <h1>Realizar Reserva</h1>
+    <form id="reservaForm">
+        <label>Guía Disponible:
+            <select id="guiaSelect" required></select>
+        </label>
+        <!-- El select de tour se inserta dinámicamente -->
+        <label>Fecha de Inicio:
+            <input type="date" id="fechaInicio" required>
+        </label>
+        <label>Fecha de Fin:
+            <input type="date" id="fechaFin" required>
+        </label>
+        <label>Hora de Inicio:
+            <input type="time" id="horaInicio" required>
+        </label>
+        <label>Hora de Fin:
+            <input type="time" id="horaFin" required>
+        </label>
+        <label>Lugares Visitados:
+            <input type="text" id="lugaresVisitados" required>
+        </label>
+        <label>Extras (alimentación, vehículo, etc.):
+            <input type="text" id="extras" required>
+        </label>
+        <label>Personas que realizan la actividad:
+            <input type="number" id="cantidadPersonas" min="1" required>
+        </label>
+        <label>Descripción del Tour:
+            <textarea id="descripcion" required></textarea>
+        </label>
+        <button type="submit">Guardar Reserva</button>
+    </form>
+
+    <h2>Reservas Registradas</h2>
+    <table id="tablaReservas">
+        <thead>
+            <tr>
+                <th>Guía</th>
+                <th>Fecha</th>
+                <th>Horas</th>
+                <th>Lugares</th>
+                <th>Extras</th>
+                <th>Personas</th>
+                <th>Descripción</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        // Crear select de tours y agregarlo dinámicamente al formulario
+        const guiaSelect = document.getElementById("guiaSelect");
+        const tourSelect = document.createElement("select");
+        tourSelect.id = "tourSelect";
+        tourSelect.required = true;
+
+        // Insertar el select de tour antes del input de fecha de inicio
+        document.getElementById("reservaForm").insertBefore(
+            crearLabelConInput("Tour Seleccionado:", tourSelect),
+            document.getElementById("fechaInicio").parentElement
+        );
+
+        function crearLabelConInput(texto, input) {
+            const label = document.createElement("label");
+            label.textContent = texto;
+            label.appendChild(input);
+            return label;
+        }
+
+        // Obtener guías y tours desde localStorage
+        const guias = JSON.parse(localStorage.getItem("guias")) || [];
+        const tours = JSON.parse(localStorage.getItem("tours")) || [];
+
+        // Llenar select de guías
+        guias.forEach(g => {
+            const option = document.createElement("option");
+            option.value = g.nombre;
+            option.textContent = `${g.nombre} (${g.disponibilidad})`;
+            guiaSelect.appendChild(option);
+        });
+
+        // Llenar select de tours
+        tours.forEach(t => {
+            const option = document.createElement("option");
+            option.value = t.nombre;
+            option.textContent = `${t.nombre} - ${t.tipo}`;
+            tourSelect.appendChild(option);
+        });
+
+        // Manejar el envío del formulario
+        document.getElementById("reservaForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const guia = guiaSelect.value;
+            const tour = tourSelect.value;
+            const fechaInicio = document.getElementById("fechaInicio").value;
+            const fechaFin = document.getElementById("fechaFin").value;
+            const horaInicio = document.getElementById("horaInicio").value;
+            const horaFin = document.getElementById("horaFin").value;
+            const lugares = document.getElementById("lugaresVisitados").value;
+            const extras = document.getElementById("extras").value;
+            const personas = document.getElementById("cantidadPersonas").value;
+            const descripcion = document.getElementById("descripcion").value;
+
+            const tbody = document.getElementById("tablaReservas").querySelector("tbody");
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${guia}</td>
+                <td>${fechaInicio} - ${fechaFin}</td>
+                <td>${horaInicio} - ${horaFin}</td>
+                <td>${lugares}</td>
+                <td>${extras}</td>
+                <td>${personas}</td>
+                <td>${tour} - ${descripcion}</td>
+            `;
+            // Guardar la reserva en localStorage
+const reservas = JSON.parse(localStorage.getItem("reservas")) || [];
+reservas.push({
+  guia,
+  tour,
+  fechaInicio,
+  fechaFin,
+  horaInicio,
+  horaFin,
+  lugares,
+  extras,
+  vehiculo: "Vehículo asignado", // puedes reemplazarlo por otro campo si lo deseas
+  personas,
+  descripcion
+});
+localStorage.setItem("reservas", JSON.stringify(reservas));
+
+// También mostrarla en la tabla local de esta página
+tbody.appendChild(row);
+this.reset();
+
+        });
+    </script>
+</body>
+</html>

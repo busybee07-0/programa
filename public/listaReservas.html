@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reservas Realizadas</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <h1>Reservas Realizadas</h1>
+
+  <button onclick="window.location.href='realizarReserva.html'" class="btn">Nueva Reserva</button>
+
+  <table id="tablaReservas">
+    <thead>
+      <tr>
+        <th>Guía</th>
+        <th>Tour</th>
+        <th>Fecha Inicio</th>
+        <th>Fecha Fin</th>
+        <th>Hora Inicio</th>
+        <th>Hora Fin</th>
+        <th>Lugares</th>
+        <th>Extras</th>
+        <th>Vehículo</th>
+        <th>Personas</th>
+        <th>Descripción</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const reservas = JSON.parse(localStorage.getItem("reservas")) || [];
+      const tbody = document.querySelector("#tablaReservas tbody");
+
+      reservas.forEach(reserva => {
+        const fila = document.createElement("tr");
+        fila.innerHTML = `
+          <td>${reserva.guia}</td>
+          <td>${reserva.tour}</td>
+          <td>${reserva.fechaInicio}</td>
+          <td>${reserva.fechaFin}</td>
+          <td>${reserva.horaInicio}</td>
+          <td>${reserva.horaFin}</td>
+          <td>${reserva.lugares}</td>
+          <td>${reserva.extras}</td>
+          <td>${reserva.vehiculo}</td>
+          <td>${reserva.personas}</td>
+          <td>${reserva.descripcion}</td>
+        `;
+        tbody.appendChild(fila);
+      });
+    });
+  </script>
+</body>
+</html>

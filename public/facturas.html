@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Facturación</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <h1>Facturación de Reservas</h1>
+
+  <section>
+    <label for="reservaFactura">Selecciona una reserva:</label>
+    <select id="reservaFactura"></select>
+    <button id="generarFactura">Generar Factura</button>
+  </section>
+
+  <h2>Facturas Generadas</h2>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Tour</th>
+        <th>Guía</th>
+        <th>Fecha</th>
+        <th>Costo</th>
+        <th>Precio Cliente</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="tablaFacturas"></tbody>
+  </table>
+
+  <script>
+    const reservas = JSON.parse(localStorage.getItem("reservas")) || [];
+    const tours = JSON.parse(localStorage.getItem("tours")) || [];
+    const facturaSelect = document.getElementById("reservaFactura");
+    const tablaFacturas = document.getElementById("tablaFacturas");
+    const facturas = JSON.parse(localStorage.getItem("facturas")) || [];
+
+    function mostrarReservasEnSelect() {
+      facturaSelect.innerHTML = '<option value="">-- Selecciona una reserva --</option>';
+      reservas.forEach((reserva, i) => {
+        const opt = document.createElement("option");
+        opt.value = i;
+        opt.textContent = `${reserva.tour} - ${reserva.fechaInicio}`;
+        facturaSelect.appendChild(opt);
+      });
+    }
+
+    function mostrarFacturas() {
+      tablaFacturas.innerHTML = "";
+      facturas.forEach((factura, i) => {
+        const fila = document.createElement("tr");
+        fila.innerHTML = `
+          <td>${factura.tour}</td>
+          <td>${factura.guia}</td>
+          <td>${factura.fecha}</td>
+          <td>$${Number(factura.costoEmpresa).toFixed(2)}</td>
+          <td>$${Number(factura.precioCliente).toFixed(2)}</td>
+          <td><button onclick="eliminarFactura(${i})">Eliminar</button></td>
+        `;
+        tablaFacturas.appendChild(fila);
+      });
+    }
+
+    function eliminarFactura(index) {
+      facturas.splice(index, 1);
+      localStorage.setItem("facturas", JSON.stringify(facturas));
+      mostrarFacturas();
+    }
+
+    document.getElementById("generarFactura").addEventListener("click", () => {
+      const index = facturaSelect.value;
+      if (index === "") return;
+
+      const reserva = reservas[index];
+      const tour = tours.find(t => t.nombre === reserva.tour);
+
+      const factura = {
+        guia: reserva.guia || "Desconocido",
+        tour: reserva.tour || "Sin nombre",
+        fecha: reserva.fechaInicio || "Sin fecha",
+        costoEmpresa: tour?.costoEmpresa || 0,
+        precioCliente: tour?.precioCliente || 0
+      };
+
+      facturas.push(factura);
+      localStorage.setItem("facturas", JSON.stringify(facturas));
+      mostrarFacturas();
+    });
+
+    mostrarReservasEnSelect();
+    mostrarFacturas();
+  </script>
+</body>
+</html>

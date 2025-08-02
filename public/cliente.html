@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Reservar Tour</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <h1>Reservar un Tour</h1>
+
+  <form id="formReserva">
+    <label for="tour">Selecciona un tour:</label>
+    <select id="tour" required></select><br><br>
+
+    <label for="fecha">Fecha del tour:</label>
+    <input type="date" id="fecha" required /><br><br>
+
+    <h3>Datos de los participantes</h3>
+    <div id="participantes"></div>
+    <button type="button" id="agregarParticipante">Agregar Participante</button><br><br>
+
+    <label><input type="checkbox" id="alimentacion" /> Incluir alimentación extra</label><br><br>
+
+    <label><input type="checkbox" id="terminos" required /> Acepto los términos y condiciones</label><br><br>
+
+    <button type="submit">Reservar</button>
+  </form>
+
+  <script>
+    const tours = JSON.parse(localStorage.getItem("tours")) || [];
+    const reservas = JSON.parse(localStorage.getItem("reservas")) || [];
+
+    const tourSelect = document.getElementById("tour");
+    const form = document.getElementById("formReserva");
+    const participantesDiv = document.getElementById("participantes");
+    const btnAgregar = document.getElementById("agregarParticipante");
+
+    function cargarTours() {
+      tours.forEach(t => {
+        const opt = document.createElement("option");
+        opt.value = t.nombre;
+        opt.textContent = t.nombre;
+        tourSelect.appendChild(opt);
+      });
+    }
+
+    function crearCampoParticipante() {
+      const div = document.createElement("div");
+      div.classList.add("participante");
+      div.innerHTML = `
+        <label>Nombre: <input type="text" name="nombre" required /></label>
+        <label>Edad: <input type="number" name="edad" required min="0" /></label>
+        <label>Documento: <input type="text" name="documento" required /></label>
+        <button type="button" onclick="this.parentElement.remove()">Eliminar</button>
+        <br><br>
+      `;
+      participantesDiv.appendChild(div);
+    }
+
+    btnAgregar.addEventListener("click", crearCampoParticipante);
+
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+
+      if (!document.getElementById("terminos").checked) {
+        alert("Debes aceptar los términos y condiciones.");
+        return;
+      }
+
+      const participantes = [];
+      document.querySelectorAll(".participante").forEach(p => {
+        participantes.push({
+          nombre: p.querySelector("input[name='nombre']").value,
+          edad: parseInt(p.querySelector("input[name='edad']").value),
+          documento: p.querySelector("input[name='documento']").value
+        });
+      });
+
+      if (participantes.length === 0) {
+        alert("Debes agregar al menos un participante.");
+        return;
+      }
+
+      const reserva = {
+        tour: tourSelect.value,
+        fechaInicio: document.getElementById("fecha").value,
+        participantes,
+        alimentacionExtra: document.getElementById("alimentacion").checked,
+        guia: "Por asignar"
+      };
+
+      reservas.push(reserva);
+      localStorage.setItem("reservas", JSON.stringify(reservas));
+
+      alert("¡Reserva realizada con éxito!");
+      form.reset();
+      participantesDiv.innerHTML = "";
+    });
+
+    cargarTours();
+    crearCampoParticipante();
+  </script>
+</body>
+</html>

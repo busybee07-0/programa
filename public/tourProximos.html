@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tours Próximos</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <h1>Tours Programados</h1>
+
+  <label for="fechaFiltro">Filtrar por fecha (YYYY-MM-DD):</label>
+  <input type="date" id="fechaFiltro" />
+  <button onclick="filtrar()">Filtrar</button>
+  <button onclick="mostrarTodos()">Mostrar Todos</button>
+
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Tour</th>
+        <th>Guía</th>
+        <th>Inicio</th>
+        <th>Fin</th>
+        <th>Lugares</th>
+      </tr>
+    </thead>
+    <tbody id="tablaToursProximos"></tbody>
+  </table>
+
+  <script>
+    const reservas = JSON.parse(localStorage.getItem("reservas")) || [];
+    const tbody = document.getElementById("tablaToursProximos");
+
+    function render(reservasFiltradas) {
+      tbody.innerHTML = "";
+      reservasFiltradas.forEach(r => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${r.tour}</td>
+          <td>${r.guia}</td>
+          <td>${r.fechaInicio}</td>
+          <td>${r.fechaFin}</td>
+          <td>${r.lugares}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filtrar() {
+      const fecha = document.getElementById("fechaFiltro").value;
+      const filtradas = reservas.filter(r => r.fechaInicio === fecha);
+      render(filtradas);
+    }
+
+    function mostrarTodos() {
+      render(reservas);
+    }
+
+    mostrarTodos();
+  </script>
+</body>
+</html>
